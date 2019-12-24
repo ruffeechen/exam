@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.postc.mapper.PostClassMapper">
+    
+    <resultMap type="PostClass" id="PostClassResult">
+        <result property="classId"    column="class_id"    />
+        <result property="postId"    column="post_id"    />
+        <result property="level"    column="level"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectPostClassVo">
+        select class_id, post_id, level, create_by, create_time, update_by, update_time from sys_post_class
+    </sql>
+
+    <select id="selectPostClassList" parameterType="PostClass" resultMap="PostClassResult">
+        select c.class_id, p.post_id, c.level, c.create_by, c.create_time, c.update_by, c.update_time ,
+        p.post_name
+        from sys_post_class c
+        left join sys_post p on c.post_id=p.post_id 
+        <where>  
+            <if test="postId != null "> and c.post_id = #{postId}</if>
+            <if test="level != null "> and c.level = #{level}</if>
+        </where>
+    </select>
+    
+    <select id="selectPostClassById" parameterType="Long" resultMap="PostClassResult">
+        <include refid="selectPostClassVo"/>
+        where class_id = #{classId}
+    </select>
+        
+    <insert id="insertPostClass" parameterType="PostClass" useGeneratedKeys="true" keyProperty="classId">
+        insert into sys_post_class
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="postId != null ">post_id,</if>
+            <if test="level != null ">level,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="postId != null ">#{postId},</if>
+            <if test="level != null ">#{level},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePostClass" parameterType="PostClass">
+        update sys_post_class
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="postId != null ">post_id = #{postId},</if>
+            <if test="level != null ">level = #{level},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+        </trim>
+        where class_id = #{classId}
+    </update>
+
+    <delete id="deletePostClassById" parameterType="Long">
+        delete from sys_post_class where class_id = #{classId}
+    </delete>
+
+    <delete id="deletePostClassByIds" parameterType="String">
+        delete from sys_post_class where class_id in 
+        <foreach item="classId" collection="array" open="(" separator="," close=")">
+            #{classId}
+        </foreach>
+    </delete>
+    
+</mapper>

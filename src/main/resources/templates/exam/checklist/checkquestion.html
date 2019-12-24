@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('考试评分-考官版')" />
+    <link th:href="@{/css/zoomify.min.css}" rel="stylesheet"/>
+</head>
+<body class="white-bg">
+	<div class="ibox-title ibox-title-gray dashboard-header gray-bg">
+      <div class="row">
+      <div class="col-sm-3">
+       	<div class="form-group">
+               <h4>考试名称：[[*{venues}]]</h4>
+           </div>
+       </div>
+       <div class="col-sm-3">
+       	<div class="form-group">
+               <h4>部门：[[*{deptName}]]</h4>
+           </div>
+       </div>
+       <div class="col-sm-3">
+       	<div class="form-group">
+               <h4>人员：[[*{userName}]]</h4>
+           </div>
+       </div>
+       </div>
+    </div>
+	<!-- <form id="form-examlist" th:object="${examList}">  </div> -->
+	<form id="form-edit" name="myform" th:object="${examList}">
+      <div class="ibox-content">
+ 		<ul class="list-group list-group-striped">
+            <li class="list-group-item" th:each="question:${questions}" >
+            	<div class="row show-grid">
+            		<div class="col-sm-1">题目[[${question.examId}]] </div>
+                    <div name="title" class="col-xs-8 col-sm-6" th:text="${question.title}"></div>
+                    <div >
+                    	<input name="npoint" onchange="if(!/(^0$)|(^100$)|(^\d{1,2}$)/.test(value)){value='';alert('请输入0-100!');}"
+                    	 onkeyup="this.value=this.value.replace(/[^\d]/g,'')" onafterpaste="this.value=this.value.replace(/[^\d]/g,'') " 
+                    		class="col-sm-1" placeholder="*得分"  type="text" required/>
+                    </div>
+                    <input name="avatar" type="hidden" th:value="${question.avatar}"></input>
+                </div>
+            </li>
+       </ul>
+     </div>
+    </form>
+    <div class="modal inmodal fade" id="myModal5" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg" >
+            <div class="modal-content" style="width:720px;">
+                <div class="modal-body" style="margin-left:-100px;" >
+                	<img id="image0" style="width:720px;margin:0 auto;" src="" alt="">
+                	<img id="image1" style="width:720px;margin:0 auto;" src="" alt="">
+                	<img id="image2" style="width:720px;margin:0 auto;" src="" alt="">
+                	<img id="image3" style="width:720px;margin:0 auto;" src="" alt="">
+                	<img id="image4" style="width:720px;margin:0 auto;" src="" alt="">
+                	<img id="image5" style="width:720px;margin:0 auto;" src="" alt="">
+                	<img id="image6" style="width:720px;margin:0 auto;" src="" alt="">
+                	<img id="image7" style="width:720px;margin:0 auto;" src="" alt="">
+                	<img id="image8" style="width:720px;margin:0 auto;" src="" alt="">
+                	<img id="image9" style="width:720px;margin:0 auto;" src="" alt="">
+                	<img id="image10" style="width:720px;margin:0 auto;" src="" alt="">
+                	<img id="image11" style="width:720px;margin:0 auto;" src="" alt="">
+                	<img id="image12" style="width:720px;margin:0 auto;" src="" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-offset-5 col-sm-10">
+        	<button type="button" class="btn btn-primary" data-toggle="modal" onclick="onclickBtn()"  data-target="#myModal5">参考答案</button>
+        	<button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-reply-all"></i>返回 </button>
+            <button type="button" class="btn btn-sm btn-primary" onclick="sign()"><i class="fa fa-check"></i>签字 </button>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script  type="text/javascript">
+	    var prefix = ctx + "exam/exam";
+	    var prefix2 = ctx + "exam/examlist"
+	    $("#form-edit").validate({
+	        focusCleanup: true
+	    });
+	    
+	    function onclickBtn(){
+	    	var ava = myform.avatar;
+	    	if(ava != null) {
+	    		for(var i=0; i<ava.length; i++) {
+	    			var image = '#image' + i;
+	    			$(image).attr('src',myform.avatar[i].value);
+	    		}
+	    	}
+	    }
+	    
+	    function submitHandler() {
+	        if ($.validate.form()) {
+	        	var data = $("#form-examlist-edit").serializeArray();
+	        	$.operate.saveTab(prefix + "/edit", data);
+	        }
+	    };
+	    function sign() {
+	    	if ($.validate.form()) {
+	    		var qId = [[*{qId}]];
+	    		var point = '';
+		   		var data = $("#form-edit").serializeArray();
+		   		var isfirst = true;
+		   		for (var i = 0; i < data.length; i++) {
+		   			if(data[i].name == 'npoint') {
+		   				if(isfirst) {
+		   					point = data[i].value;
+		   					isfirst = false;
+		   				} else {
+		   					if(data[i].value == null || data[i].value == ''){
+		   						point += ',' + 0;
+			   				} else {
+			   					point += ',' + data[i].value;
+			   				}
+		   					
+		   				}
+		   			}
+		   		}
+		   		var postdata = {
+		   			code : point
+		   		}
+		   		$.operate.saveTab(prefix + "/markExam/" + qId, postdata);
+	    	}
+	    };
+	</script>
+</body>
+</html>

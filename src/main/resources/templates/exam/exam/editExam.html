@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('查看出题历史')" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-examlist-edit" th:object="${checkList}">
+         	<div class="form-group">
+                <label class="col-sm-3 control-label">考试场次：</label>
+                <div class="col-sm-8">
+                    <textarea name="remark" class="form-control">[[*{venues}]]</textarea>
+                </div>
+            </div>
+             <div class="form-group">
+                <label class="col-sm-3 control-label">考试名称：</label>
+                <div class="col-sm-8">
+                    <textarea name="remark" class="form-control">[[*{title}]]</textarea>
+                </div>
+            </div>
+             <div class="form-group">
+                <label class="col-sm-3 control-label">部门：</label>
+                <div class="col-sm-8">
+                    <textarea name="remark" class="form-control">[[*{deptId}]]</textarea>
+                </div>
+            </div>
+             <div class="form-group">
+                <label class="col-sm-3 control-label">岗位：</label>
+                <div class="col-sm-8">
+                    <textarea name="remark" class="form-control">[[*{postId}]]</textarea>
+                </div>
+            </div>
+             <div class="form-group">
+                <label class="col-sm-3 control-label">题型一：</label>
+                <div class="col-sm-8">
+                    <textarea name="remark" class="form-control">[[*{type1}]]</textarea>
+                </div>
+                <label class="col-sm-3 control-label">出题数量：</label>
+                <div class="col-sm-8">
+                    <textarea name="remark" class="form-control">[[*{num1}]]</textarea>
+                </div>
+            </div>
+             <div class="form-group">
+                <label class="col-sm-3 control-label">题型二：</label>
+                <div class="col-sm-8">
+                    <textarea name="remark" class="form-control">[[*{type2}]]</textarea>
+                </div>
+                <label class="col-sm-3 control-label">出题数量：</label>
+                <div class="col-sm-8">
+                    <textarea name="remark" class="form-control">[[*{num2}]]</textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">题型三：</label>
+                <div class="col-sm-8">
+                    <textarea name="remark" class="form-control">[[*{type3}]]</textarea>
+                </div>
+                <label class="col-sm-3 control-label">出题数量：</label>
+                <div class="col-sm-8">
+                    <textarea name="remark" class="form-control">[[*{num3}]]</textarea>
+                </div>
+            </div>
+             <div class="form-group">
+                <label class="col-sm-3 control-label">题型四：</label>
+                <div class="col-sm-8">
+                    <textarea name="remark" class="form-control">[[*{type4}]]</textarea>
+                </div>
+                <label class="col-sm-3 control-label">出题数量：</label>
+                <div class="col-sm-8">
+                    <textarea name="remark" class="form-control">[[*{num4}]]</textarea>
+                </div>
+            </div>
+             <div class="form-group">
+                <label class="col-sm-3 control-label">题型五：</label>
+                <div class="col-sm-8">
+                    <textarea name="remark" class="form-control">[[*{type5}]]</textarea>
+                </div>
+                <label class="col-sm-3 control-label">出题数量：</label>
+                <div class="col-sm-8">
+                    <textarea name="remark" class="form-control">[[*{num5}]]</textarea>
+                </div>
+            </div>
+             <div class="form-group">
+                <label class="col-sm-3 control-label">考员：</label>
+                <div class="col-sm-8">
+                    <textarea name="remark" class="form-control">[[*{examiner}]]</textarea>
+                </div>
+            </div>
+             <div class="form-group">
+                <label class="col-sm-3 control-label">考官：</label>
+                <div class="col-sm-8">
+                    <textarea name="remark" class="form-control">[[*{checkDept}]]</textarea>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="row">
+        <div class="col-sm-offset-5 col-sm-10">
+            <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-reply-all"></i>关 闭 </button>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script type="text/javascript">
+        var prefix = ctx + "exam/examlist";
+    	
+    </script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('考试')" />
+</head>
+<body class="white-bg">
+	<div class="ibox-title ibox-title-gray dashboard-header gray-bg">
+      <div class="row">
+      <div class="col-sm-3">
+       	<div class="form-group">
+               <h4>考试名称：[[*{venues}]]</h4>
+           </div>
+       </div>
+       <div class="col-sm-3">
+       	<div class="form-group">
+               <h4>部门：[[*{deptName}]]</h4>
+           </div>
+       </div>
+       <div class="col-sm-3">
+       	<div class="form-group">
+               <h4>人员：[[*{userName}]]</h4>
+           </div>
+       </div>
+       </div>
+    </div>
+	<!-- <form id="form-examlist" th:object="${examList}">  </div> -->
+     <div class="ibox-content">
+ 		<ul class="list-group list-group-striped">
+            <li class="list-group-item" th:each="question:${questions}" >
+            	<div class="row show-grid">
+            		<div class="col-sm-1">题目[[${question.examId}]] </div>
+                    <div name="title" class="col-xs-8 col-sm-6" th:text="${question.title}"></div>
+                    <div class="col-sm-1">[[${question.npoint}]] </div>
+	        	</div>
+                </div>
+            </li>
+       </ul>
+     </div>
+    <div class="row">
+        <div class="col-sm-offset-5 col-sm-10">
+            <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-reply-all"></i>返回 </button>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script>
+    var prefix = ctx + "exam/examlist";
+    $("#form-examlist-edit").validate({
+        focusCleanup: true
+    });
+
+    function submitHandler() {
+        if ($.validate.form()) {
+            $.operate.save(prefix + "/edit", $('#form-examlist-edit').serialize());
+        }
+    };
+    function submitHandler() {
+        if ($.validate.form()) {
+        	var data = $("#form-examlist-edit").serializeArray();
+        	$.operate.saveTab(prefix + "/edit", data);
+        }
+    };
+	</script>
+</body>
+</html>

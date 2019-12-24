@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.exam.type.mapper.ExamTypeMapper">
+    
+    <resultMap type="ExamType" id="ExamTypeResult">
+        <result property="typeId"    column="type_id"    />
+        <result property="code"    column="code"    />
+        <result property="name"    column="name"    />
+        <result property="vmemo"    column="vmemo"    />
+        <result property="deptId"    column="dept_id"    />
+    </resultMap>
+
+    <sql id="selectExamTypeVo">
+        select type_id, code, name, vmemo, dept_id from t_exam_type
+    </sql>
+
+	<select id="selectTypeByAll" resultMap="ExamTypeResult">
+		<include refid="selectExamTypeVo"/>
+	</select>
+	
+
+    <select id="selectExamTypeList" parameterType="ExamType" resultMap="ExamTypeResult">
+        <include refid="selectExamTypeVo"/>
+        <where>  
+            <if test="code != null  and code != ''"> and code = #{code}</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectExamTypeByDept" parameterType="Long" resultMap="ExamTypeResult">
+        <include refid="selectExamTypeVo"/>
+        where dept_id = #{deptId}
+    </select>
+    
+    <select id="selectExamTypeById" parameterType="Long" resultMap="ExamTypeResult">
+        <include refid="selectExamTypeVo"/>
+        where type_id = #{typeId}
+    </select>
+        
+    <insert id="insertExamType" parameterType="ExamType">
+        insert into t_exam_type
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="typeId != null ">type_id,</if>
+            <if test="code != null  and code != ''">code,</if>
+            <if test="name != null  and name != ''">name,</if>
+            <if test="vmemo != null  and vmemo != ''">vmemo,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="typeId != null ">#{typeId},</if>
+            <if test="code != null  and code != ''">#{code},</if>
+            <if test="name != null  and name != ''">#{name},</if>
+            <if test="vmemo != null  and vmemo != ''">#{vmemo},</if>
+         </trim>
+    </insert>
+
+    <update id="updateExamType" parameterType="ExamType">
+        update t_exam_type
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="code != null  and code != ''">code = #{code},</if>
+            <if test="name != null  and name != ''">name = #{name},</if>
+            <if test="vmemo != null  and vmemo != ''">vmemo = #{vmemo},</if>
+        </trim>
+        where type_id = #{typeId}
+    </update>
+
+    <delete id="deleteExamTypeById" parameterType="Long">
+        delete from t_exam_type where type_id = #{typeId}
+    </delete>
+
+    <delete id="deleteExamTypeByIds" parameterType="String">
+        delete from t_exam_type where type_id in 
+        <foreach item="typeId" collection="array" open="(" separator="," close=")">
+            #{typeId}
+        </foreach>
+    </delete>
+    
+</mapper>

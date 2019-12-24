@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>统计</title>
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="../static/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link href="../static/css/font-awesome.min.css" th:href="@{/css/font-awesome.min.css}" rel="stylesheet"/>
+    <link href="../static/css/main/animate.min.css" th:href="@{/css/main/animate.min.css}" rel="stylesheet"/>
+    <link href="../static/css/main/style.min862f.css" th:href="@{/css/main/style.min862f.css}" rel="stylesheet"/>
+</head>
+
+<body class="gray-bg">
+	<div class="row  border-bottom white-bg dashboard-header">
+        <div class="col-sm-5">
+            <h2>考试管理系统</h2>
+            <p>前端后台代码封装过后精简易，出错概率低。系统会陆续更新一些实用功能。</p>
+             <h4>技术选型：</h4>
+            <ol>
+                <li>核心框架：Spring Boot。</li>
+                <li>安全框架：Apache Shiro。</li>
+                <li>模板引擎：Thymeleaf。</li>
+                <li>持久层框架：MyBatis。</li>
+				<li>定时任务:Quartz。</li>
+                <li>数据库连接池：Druid。</li>
+                <li>工具类：Fastjson。</li>
+                <li>更多……</li>
+            </ol>
+        </div>
+    </div>
+    <div class="wrapper wrapper-content">
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <span class="label label-success pull-right">月</span>
+                        <h5>题库总量</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <h1 class="no-margins">80</h1>
+                        <small>总体</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <span class="label label-info pull-right">全年</span>
+                        <h5>考题</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <h1 class="no-margins">27套</h1>
+                        <div class="stat-percent font-bold text-info">20% <i class="fa fa-level-up"></i>
+                        </div>
+                        <small>新题库</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <span class="label label-primary pull-right">今天</span>
+                        <h5>访客</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <h1 class="no-margins">20</h1>
+                        <div class="stat-percent font-bold text-navy">33% <i class="fa fa-level-up"></i>
+                        </div>
+                        <small>新访客</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <span class="label label-danger pull-right">最近一个月</span>
+                        <h5>活跃用户</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <h1 class="no-margins">45</h1>
+                        <div class="stat-percent font-bold text-danger">38% <i class="fa fa-level-down"></i>
+                        </div>
+                        <small>9月</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+    <script th:src="@{/js/jquery.min.js}"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <script th:src="@{/ajax/libs/flot/jquery.flot.js}"></script>
+    <script th:src="@{/ajax/libs/layer/layer.min.js}"></script>
+    <script type="text/javascript">
+	    $('#pay-qrcode').click(function(){
+	        var html=$(this).html();
+	        parent.layer.open({
+	            title: false,
+	            type: 1,
+	            closeBtn:false,
+	            shadeClose:true,
+	            area: ['600px', 'auto'],
+	            content: html
+	        });
+	    });
+    </script>
+    <th:block th:include="include :: sparkline-js" />
+    <script type="text/javascript">
+	    $(document).ready(function () {
+	        var data2 = [
+	            [gd(2012, 1, 1), 7], [gd(2012, 1, 2), 6], [gd(2012, 1, 3), 4], [gd(2012, 1, 4), 8],
+	            [gd(2012, 1, 5), 9], [gd(2012, 1, 6), 7], [gd(2012, 1, 7), 5], [gd(2012, 1, 8), 4],
+	            [gd(2012, 1, 9), 7], [gd(2012, 1, 10), 8], [gd(2012, 1, 11), 9], [gd(2012, 1, 12), 6],
+	            [gd(2012, 1, 13), 4], [gd(2012, 1, 14), 5], [gd(2012, 1, 15), 11], [gd(2012, 1, 16), 8],
+	            [gd(2012, 1, 17), 8], [gd(2012, 1, 18), 11], [gd(2012, 1, 19), 11], [gd(2012, 1, 20), 6],
+	            [gd(2012, 1, 21), 6], [gd(2012, 1, 22), 8], [gd(2012, 1, 23), 11], [gd(2012, 1, 24), 13],
+	            [gd(2012, 1, 25), 7], [gd(2012, 1, 26), 9], [gd(2012, 1, 27), 9], [gd(2012, 1, 28), 8],
+	            [gd(2012, 1, 29), 5], [gd(2012, 1, 30), 8], [gd(2012, 1, 31), 25]
+	        ];
+	
+	        var data3 = [
+	            [gd(2012, 1, 1), 80], [gd(2012, 1, 2), 50], [gd(2012, 1, 3), 60], [gd(2012, 1, 4), 70],
+	            [gd(2012, 1, 5), 50], [gd(2012, 1, 6), 56], [gd(2012, 1, 7), 80], [gd(2012, 1, 8), 89],
+	            [gd(2012, 1, 9), 4], [gd(2012, 1, 10), 76], [gd(2012, 1, 11), 69], [gd(2012, 1, 12), 70],
+	            [gd(2012, 1, 13), 50], [gd(2012, 1, 14), 30], [gd(2012, 1, 15), 70], [gd(2012, 1, 16), 76],
+	            [gd(2012, 1, 17), 35], [gd(2012, 1, 18), 88], [gd(2012, 1, 19), 88], [gd(2012, 1, 20), 88],
+	            [gd(2012, 1, 21), 97], [gd(2012, 1, 22), 44], [gd(2012, 1, 23), 99], [gd(2012, 1, 24), 57],
+	            [gd(2012, 1, 25), 76], [gd(2012, 1, 26), 66], [gd(2012, 1, 27), 88], [gd(2012, 1, 28), 90],
+	            [gd(2012, 1, 29), 18], [gd(2012, 1, 30), 55], [gd(2012, 1, 31), 93]
+	        ];
+	
+	
+	        var dataset = [
+	            {
+	                label: "考试场次",
+	                data: data3,
+	                color: "#1ab394",
+	                bars: {
+	                    show: true,
+	                    align: "center",
+	                    barWidth: 24 * 60 * 60 * 600,
+	                    lineWidth: 0
+	                }
+	
+	            }, {
+	                label: "考卷数",
+	                data: data2,
+	                yaxis: 2,
+	                color: "#464f88",
+	                lines: {
+	                    lineWidth: 1,
+	                    show: true,
+	                    fill: true,
+	                    fillColor: {
+	                        colors: [{
+	                            opacity: 0.2
+	                        }, {
+	                            opacity: 0.2
+	                        }]
+	                    }
+	                },
+	                splines: {
+	                    show: false,
+	                    tension: 0.6,
+	                    lineWidth: 1,
+	                    fill: 0.1
+	                },
+	            }
+	        ];
+	
+	
+	        var options = {
+	            xaxis: {
+	                mode: "time",
+	                tickSize: [3, "day"],
+	                tickLength: 0,
+	                axisLabel: "Date",
+	                axisLabelUseCanvas: true,
+	                axisLabelFontSizePixels: 12,
+	                axisLabelFontFamily: 'Arial',
+	                axisLabelPadding: 10,
+	                color: "#838383"
+	            },
+	            yaxes: [{
+	                    position: "left",
+	                    max: 1070,
+	                    color: "#838383",
+	                    axisLabelUseCanvas: true,
+	                    axisLabelFontSizePixels: 12,
+	                    axisLabelFontFamily: 'Arial',
+	                    axisLabelPadding: 3
+	            }, {
+	                    position: "right",
+	                    clolor: "#838383",
+	                    axisLabelUseCanvas: true,
+	                    axisLabelFontSizePixels: 12,
+	                    axisLabelFontFamily: ' Arial',
+	                    axisLabelPadding: 67
+	            }
+	            ],
+	            legend: {
+	                noColumns: 1,
+	                labelBoxBorderColor: "#000000",
+	                position: "nw"
+	            },
+	            grid: {
+	                hoverable: false,
+	                borderWidth: 0,
+	                color: '#838383'
+	            }
+	        };
+	
+	        function gd(year, month, day) {
+	            return new Date(year, month - 1, day).getTime();
+	        }
+	
+	        var previousPoint = null,
+	            previousLabel = null;
+	
+	        $.plot($("#flot-dashboard-chart"), dataset, options);
+	    });
+    </script>
+</body>
+</html>

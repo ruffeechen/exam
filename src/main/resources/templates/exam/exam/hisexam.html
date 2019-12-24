@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('考试历史')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+	                <div class="row">
+		                    <div class="col-sm-2">
+		                        <select name="venus" class="form-control">
+									<option value="" >请选择考试场次</option>
+									<option th:each="venue:${venues}" th:value="${venue.venuesId}" th:text="${venue.Name}"></option>
+								</select>
+		                    </div>
+		                    <div class="col-sm-2">
+		                    	<select name="deptId" th:with="type=${@dict.getType('sys_dept')}" class="form-control">
+									<option value="">请选择部门</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+		                    </div>
+		                    <div class="col-sm-2">
+		                         <select name="postId" th:with="type=${@dict.getType('sys_postc')}" class="form-control" >
+	                            	<option value="" >请选择岗级</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+		                    </div>
+		                    <div class="col-sm-2">
+		                     	<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+		                    </div>
+		                </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="exam:question:export">
+                    <i class="fa fa-download"></i> 导出
+                 </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table" data-mobile-responsive="true"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var prefix = ctx + "exam/exam";
+        var editFlag = [[${@permission.hasPermi('exam:exam:search')}]];
+        var typeDatas = [[${@dict.getType('sys_dept')}]];
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                exportUrl: prefix + "/export",
+                modalName: "考题",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field : 'qId', 
+                    title : '试卷',
+                    visible: false
+                },{
+                    field : 'userName', 
+                    title : '考员'
+                },
+                {
+                    field : 'deptId', 
+                    title : '部门',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(typeDatas, value);
+                    }
+                },
+                {
+                    field : 'postId', 
+                    title : '岗级'
+                },
+                {
+                    field : 'venuesName', 
+                    title : '考试场次'
+                },
+                {
+                    field : 'npoint', 
+                    title : '总得分'
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="openQuestion(\'' + row.qid + '\')"><i class="fa fa-edit"></i>查看结果</a> ');
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+        
+        function openQuestion(qid){
+        	$.modal.openTab("答题历史", prefix + "/editQuestion/" + qid);
+        }
+    </script>
+</body>
+</html>

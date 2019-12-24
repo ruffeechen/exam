@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+<th:block th:include="include :: header('随机考试')" />
+<th:block th:include="include :: jquery-steps-css" />
+</head>
+<body class="gray-bg">
+	<div class="wrapper wrapper-content animated fadeInRight">
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="ibox">
+					<div class="ibox-title">
+						<h3>随机考试</h3>
+					</div>
+					<div class="ibox-content">
+							<fieldset>
+							<form id="commentForm" name="cform" action="/exam/exam/edit/11">
+								<div class="col">
+									<div class="col-md-4">
+										<div class="form-group">
+											<label>考试场次</label> 
+											<select name="venues" id="venuesId" class="form-control">
+												<option value="">请选择考场</option>
+												<option th:each="venue:${venues}"
+													th:value="${venue.venuesId}" th:text="${venue.Name}"></option>
+											</select>
+										</div>
+										<div class="form-group">
+											<label>部门</label> 
+											<select name="deptId" onchange="changeDept()" th:with="type=${@dict.getType('sys_dept')}"
+												class="form-control required">
+												<option value="">请选择部门</option>
+												<option th:each="dict : ${type}" th:text="${dict.dictLabel}"
+													th:value="${dict.dictValue}"></option>
+											</select>
+										</div>
+									</div>
+								</div>
+								<div class="col">
+									<div class="col-md-4">
+										<div class="form-group">
+											<label>岗级</label> 
+											<select name="postId" id="postId" th:with="type=${@dict.getType('sys_postc')}" class="form-control">
+												<option value="">请选择岗级</option>
+												<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+											</select>
+										</div>
+										<div class="form-group">
+											<label>考员</label> 
+											<select name="checkId" id="checkId" class="form-control">
+												<option value="">请选择考试人员名称</option>
+												<option th:each="examin:${examiner}"
+													th:value="${examin.userId}" th:text="${examin.userName}"></option>
+											</select>
+										</div>
+										
+										<div class="form-group">
+										    <button type="button" class="btn btn-sm btn-primary" onclick="onhandle()"><i class="fa fa-check"></i>开始考试</button>&nbsp;
+										</div>
+									</div>
+								</div>
+								</form>
+							</fieldset>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+	<th:block th:include="include :: footer" />
+	<script type="text/javascript">
+	 $(function(){
+			$("#commentForm").validate({
+				 rules: {
+		                venues: {
+		                    required: true,
+		                    minlength: 1
+		                }, 
+		                postId: {
+		                    required: true,
+		                    minlength: 1
+		                },
+		                checkId: {
+		                	required: true,
+		                    minlength: 1
+		                },
+		                deptId: {
+		                	required: true,
+		                    minlength: 1
+		                }
+				 }
+			});
+		});
+	 function onhandle(){
+		 if ($.validate.form()) {
+			 	var prefix = ctx + "exam/exam";
+	        	var data = $("#commentForm").serializeArray();
+	        	var deptId;
+	        	var venues;
+	        	var postId;
+	        	var checkId;
+	        	for (var i = 0; i < data.length; i++) {
+	        		if(data[i].name == 'deptId') {
+	        			deptId = data[i].value;
+	        		} else if(data[i].name == 'venues'){
+	        			venues = data[i].value;
+	        		} else if(data[i].name == 'postId'){
+	        			postId = data[i].value;
+	        		} else if(data[i].name == 'checkId') {
+	        			checkId = data[i].value;
+	        		}
+	        	}
+	        	$.modal.openTab("开始考试",prefix + "/question/" +deptId+"/" + checkId+ "/" + postId + "/" + venues);
+	        }
+	 };
+	 //  部门改变
+	 function changeDept(){
+		var deptId = cform.deptId.value;
+		var prefix = ctx + "exam/exam";
+        var deviceStr="<option value=''>请选择考员</option>" ;
+        var url = prefix + "/filterUser/" + deptId;
+        $.get(url, function(data) {
+		    for (var i = 0; i < data.examiner.length; i++) {
+		    	 deviceStr+='<option  value="' + data.examiner[i].userId + '">' +data.examiner[i].userName + '</option>';
+            }
+		    $('#checkId').html("");
+	        $('#checkId').append(deviceStr);
+	        $('#checkId').selectpicker('refresh');
+	 	},'json');
+	 };
+	 
+	</script>
+</body>
+</html>

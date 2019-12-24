@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+<th:block th:include="include :: header('出题')" />
+</head>
+<body class="gray-bg">
+	<div class="container-div">
+	<form id="commentForm" name="myform">
+		<div class="row">
+			<!-- 选择场次及考场  -->
+			<div class="col-sm-12 search-collapse">
+				<div class="ibox-title">
+					<h5>1.选择考场及场次</h5>
+				</div>
+				<div class="ibox-content">
+					<div class="row">
+	                    <div class="col-md-2">
+	                        <select name="venues" class="form-control">
+								<option value="" ><span>*</span>请选择考试场次</option>
+								<option th:each="venue:${venues}" th:value="${venue.venuesId}" th:text="${venue.Name}"></option>
+							</select>
+	                    </div>
+	                    <div class="col-md-2">
+	                        <input id="title" name="title" type="text" placeholder="考试名称" class="form-control">
+	                    </div>
+	                    <div class="col-md-2">
+	                    	<select name="deptId" th:with="type=${@dict.getType('sys_dept')}" class="form-control" onchange="changePost(this)">
+								<option value=""><span>*</span>请选择部门</option>
+								<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+							</select>
+	                    </div>
+	                    <div class="col-md-2">
+	                         <select name="postId" id="postId" th:with="type=${@dict.getType('sys_postc')}" class="form-control" onchange="changePost(this)">
+                            	<option value="" ><span>*</span>请选择岗级</option>
+								<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+							</select>
+	                    </div>
+	                </div>
+	            </div>
+			</div>
+			<!-- 选中题目 -->
+			<div class="col-sm-12 search-collapse">
+				<div class="ibox-title">
+					<h5>2.选择题目</h5>
+				</div>
+				
+				<div class="ibox-content">
+					<div class="col-sm-8 select-table table-striped"
+						style="width: 500px;">
+						<table name="type1" id="bootstrap-table-1" data-mobile-responsive="true"></table>
+					</div>
+					<div class="col-sm-8 select-table table-striped"
+						style="width: 500px;">
+						<table name="type2" id="bootstrap-table-2" data-mobile-responsive="true"></table>
+					</div>
+					
+					<div class="col-sm-8 select-table table-striped"
+						style="width: 500px;">
+						<table name="type3" id="bootstrap-table-3" data-mobile-responsive="true"></table>
+					</div>
+					<div class="col-sm-8 select-table table-striped"
+						style="width: 500px;">
+						<table name="type4" id="bootstrap-table-4" data-mobile-responsive="true"></table>
+					</div>
+					<div class="col-sm-8 select-table table-striped"
+						style="width: 500px;">
+						<table name="type5" id="bootstrap-table-5" data-mobile-responsive="true"></table>
+					</div>
+				</div>
+			</div>
+			<!-- 填写抽提数目 -->
+			<div class="col-sm-12 search-collapse">
+				<div class="ibox-title">
+					<h5>3.填写抽题数目</h5>
+				</div>
+				<div class="ibox-content">
+					<div class="row">
+	                    <div class="col-md-2">
+	                        <input name="num1" type="text" placeholder="*题型1抽题数量" 
+	                        onkeyup="this.value=this.value.replace(/[^\d]/g,'')" onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
+	                        class="form-control">
+	                    </div>
+	                    <div class="col-md-2">
+	                        <input name="num2" type="text" placeholder="*题型2抽题数量" 
+	                        onkeyup="this.value=this.value.replace(/[^\d]/g,'')" onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
+	                        class="form-control">
+	                    </div>
+	                    <div class="col-md-2">
+	                        <input name="num3" type="text" placeholder="*题型3抽题数量" 
+	                        onkeyup="this.value=this.value.replace(/[^\d]/g,'')" onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
+	                        class="form-control">
+	                    </div>
+	                    <div class="col-md-2">
+	                        <input name="num4" type="text" placeholder="*题型4抽题数量" 
+	                        onkeyup="this.value=this.value.replace(/[^\d]/g,'')" onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
+	                        class="form-control">
+	                    </div>
+	                    <div class="col-md-2">
+	                        <input name="num5" type="text" placeholder="题型5抽题数量" 
+	                        onkeyup="this.value=this.value.replace(/[^\d]/g,'')" onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
+	                        class="form-control">
+	                    </div>
+	                </div>
+	            </div>
+			</div>
+			<!-- 选择考员及考官 -->
+			<div class="col-sm-12 search-collapse">
+				<div class="ibox-title">
+					<h5>4.选择考员及考官</h5>
+				</div>
+				<div class="ibox-content">
+					<div class="col-sm-8 select-table table-striped"
+						style="width: 235px;">
+						<table id="bootstrap-exam-1" name="examDept" data-mobile-responsive="true"></table>
+					</div>
+					<div class="col-sm-8 select-table table-striped"
+						style="width: 235px;">
+						<table id="bootstrap-exam-2" name="examiner" data-mobile-responsive="true"></table>
+					</div>
+					<div class="col-sm-8 select-table table-striped"
+						style="width: 240px;">
+						<table id="bootstrap-exam-3" name="checkDept" data-mobile-responsive="true"></table>
+					</div>
+					<div class="col-sm-8 select-table table-striped"
+						style="width: 240px;">
+						<table id="bootstrap-exam-4" name = "checker" data-mobile-responsive="true"></table>
+					</div>
+	            </div>
+			</div>
+			
+		</div>
+        </form>
+        <div class="row">
+			<div class="form-group">
+				<div class="col-sm-offset-5 col-sm-10">
+					<p></p>
+					<button class="btn btn-primary" onclick="searchHistory()"><i class="fa fa-reply-all"></i>查看历史</button>
+		            <button class="btn btn-primary" onclick="createExam()"><i class="fa fa-check"></i>生成试卷</button>
+		        </div>
+	        </div>
+        </div>
+	</div>
+	<th:block th:include="include :: footer" />
+	<script th:inline="javascript">
+		var prefix = ctx + "exam/exam";
+		var typeDatas = [[${@dict.getType('exam_type')}]];
+		
+		// 以下是考员及考官数组
+		$(function() {
+			var options = {
+				id : "bootstrap-exam-3",
+				url : prefix + "/checkdept",
+				showSearch : false,
+				showRefresh : false,
+				showToggle : false,
+				showColumns : false,
+				pagination : false,
+				height : 200,
+				columns : [ {
+					checkbox : true
+				}, {
+					field : 'deptId',
+					title : '部门id',
+					visible : false
+				}, {
+					field : 'deptName',
+					title : '考官所在部门'
+				} ]
+			};
+			$.table.init(options);
+		});
+		
+		function changePost(obj) {
+			$("#bootstrap-table-1").bootstrapTable('destroy');
+			$("#bootstrap-table-2").bootstrapTable('destroy');
+			$("#bootstrap-table-3").bootstrapTable('destroy');
+			$("#bootstrap-table-4").bootstrapTable('destroy');
+			$("#bootstrap-table-5").bootstrapTable('destroy');
+			$("#bootstrap-exam-1").bootstrapTable('destroy');
+			var option1 = {
+				id : "bootstrap-table-1",
+				url : prefix + "/queslist/1",
+				showSearch : false,
+				showRefresh : false,
+				showToggle : false,
+				showColumns : false,
+				pagination : false,
+				modalName : "题库",
+				height : 400,
+				columns : [ {
+					checkbox : true
+				}, {
+					field : 'examId',
+					title : '题号',
+					visible : false
+				}, {
+					field : 'code',
+					title : '编码'
+				}, {
+                    field : 'typeId', 
+                    title : '题目类型',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(typeDatas, value);
+                     }
+                },{
+					field : 'title',
+					title : '考题'
+				} ]
+			};
+			var option2 = {
+				id : "bootstrap-table-2",
+				url : prefix + "/queslist/2",
+				showSearch : false,
+				showRefresh : false,
+				showToggle : false,
+				showColumns : false,
+				pagination : false,
+				modalName : "题库",
+				height : 400,
+				columns : [ {
+					checkbox : true
+				}, {
+					field : 'examId',
+					title : '题号',
+					visible : false
+				}, {
+					field : 'code',
+					title : '编码'
+				},{
+                    field : 'typeId', 
+                    title : '题目类型',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(typeDatas, value);
+                     }
+                }, {
+					field : 'title',
+					title : '考题'
+				} ]
+			};
+			var option3 = {
+				id : "bootstrap-table-3",
+				url : prefix + "/queslist/3",
+				showSearch : false,
+				showRefresh : false,
+				showToggle : false,
+				showColumns : false,
+				pagination : false,
+				modalName : "题库",
+				height : 400,
+				columns : [ {
+					checkbox : true
+				}, {
+					field : 'examId',
+					title : '题号',
+					visible : false
+				}, {
+					field : 'code',
+					title : '编码'
+				},{
+                    field : 'typeId', 
+                    title : '题目类型',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(typeDatas, value);
+                     }
+                }, {
+					field : 'title',
+					title : '考题'
+				} ]
+			};
+			var option4 = {
+				id : "bootstrap-table-4",
+				url : prefix + "/queslist/4",
+				showSearch : false,
+				showRefresh : false,
+				showToggle : false,
+				showColumns : false,
+				pagination : false,
+				modalName : "题库",
+				height : 400,
+				columns : [ {
+					checkbox : true
+				}, {
+					field : 'examId',
+					title : '题号',
+					visible : false
+				}, {
+					field : 'code',
+					title : '编码'
+				},{
+                    field : 'typeId', 
+                    title : '题目类型',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(typeDatas, value);
+                     }
+                }, {
+					field : 'title',
+					title : '考题'
+				} ]
+			};
+			var option5 = {
+					id : "bootstrap-table-5",
+					url : prefix + "/queslist/5",
+					showSearch : false,
+					showRefresh : false,
+					showToggle : false,
+					showColumns : false,
+					pagination : false,
+					modalName : "题库",
+					height : 400,
+					columns : [ {
+						checkbox : true
+					}, {
+						field : 'examId',
+						title : '题号',
+						visible : false
+					}, {
+						field : 'code',
+						title : '编码'
+					},{
+	                    field : 'typeId', 
+	                    title : '题目类型',
+	                    formatter: function(value, row, index) {
+	                        return $.table.selectDictLabel(typeDatas, value);
+	                     }
+	                }, {
+						field : 'title',
+						title : '考题'
+					} ]
+				};
+			$.table.init(option1);
+			$.table.init(option2);
+			$.table.init(option3);
+			$.table.init(option4);
+			$.table.init(option5);
+			
+			var deptId = myform.deptId.value;
+			var examDepts = {
+				id : "bootstrap-exam-1",
+				url : prefix + "/examdept/" + deptId,
+				showSearch : false,
+				showRefresh : false,
+				showToggle : false,
+				showColumns : false,
+				pagination : false,
+				height : 200,
+				columns : [ {
+					checkbox : true
+				}, {
+					field : 'deptId',
+					title : '部门id',
+					visible : false
+				},{
+					field : 'deptName',
+					title : '考员部门'
+				} ]
+			};
+			$.table.init(examDepts);
+		};
+		
+		
+		$("#bootstrap-exam-1").on("check.bs.table", function () {         //点击radio触发事件
+			var datas = $("#bootstrap-exam-1").bootstrapTable('getSelections');
+			var dept = -1;
+			if(datas.length == 1)
+				dept = datas[0].deptId;
+			else if(datas.length >1 && datas.length<4){
+				dept = 0;
+				for(var i = 0; i< datas.length; i++) {
+					dept += "," + datas[i].deptId;
+				}
+			}
+			$("#bootstrap-exam-2").bootstrapTable('destroy');
+			var options = {
+					id : "bootstrap-exam-2",
+					url : prefix + "/examiner/" + dept,
+					showSearch : false,
+					showRefresh : false,
+					showToggle : false,
+					showColumns : false,
+					pagination : false,
+					height : 200,
+					columns : [ {
+						checkbox : true
+					}, {
+						field : 'userId',
+						title : '用户id',
+						visible : false
+					}, {
+						field : 'userName',
+						title : '考员列表'
+					} ]
+				};
+				$.table.init(options);
+		});
+		$("#bootstrap-exam-3").on("check.bs.table", function () {         //点击radio触发事件
+			var datas = $("#bootstrap-exam-3").bootstrapTable('getSelections');
+			var dept = -1;
+			if(datas.length == 1)
+				dept = datas[0].deptId;
+			else if(datas.length >1 && datas.length<4) {
+				dept = 0;
+				for(var i = 0; i< datas.length; i++) {
+					dept += "," + datas[i].deptId;
+				}
+			}
+			$("#bootstrap-exam-4").bootstrapTable('destroy');
+			var options = {
+					id : "bootstrap-exam-4",
+					url : prefix + "/checker/" + dept,
+					showSearch : false,
+					showRefresh : false,
+					showToggle : false,
+					showColumns : false,
+					pagination : false,
+					height : 200,
+					columns : [ {
+						checkbox : true
+					}, {
+						field : 'userId',
+						title : '用户id',
+						visible : false
+					}, {
+						field : 'userName',
+						title : '考官列表'
+					} ]
+				};
+				$.table.init(options);
+		});
+		function createExam() {
+			var validate = true;
+			validateTablle(validate);
+		};
+		
+		function createExamRecord(){
+			var type1 = 0;
+			var type2 = 0;
+			var type3 = 0;
+			var type4 = 0;
+			var type5 = 0;
+			var examDept = 0;
+			var examiner = 0;
+			var checkDept = 0;
+			var checker = 0;
+			
+			/* 考员考官信息*/
+			var exam1 = $("#bootstrap-exam-1").bootstrapTable('getSelections');
+			var exam2 = $("#bootstrap-exam-2").bootstrapTable('getSelections');
+			var exam3 = $("#bootstrap-exam-3").bootstrapTable('getSelections');
+			var exam4 = $("#bootstrap-exam-4").bootstrapTable('getSelections');
+			// 考题信息
+			var table1 = $("#bootstrap-table-1").bootstrapTable('getSelections');
+			var table2 = $("#bootstrap-table-2").bootstrapTable('getSelections');
+			var table3 = $("#bootstrap-table-3").bootstrapTable('getSelections');
+			var table4 = $("#bootstrap-table-4").bootstrapTable('getSelections');
+			var table5 = $("#bootstrap-table-5").bootstrapTable('getSelections');
+			//alert(myform.type1.value);
+			if(table1 != null && table1.length > 0) {
+				for(var i = 0; i< table1.length; i++) {
+					type1 += "," + table1[i].examId;
+				}
+			}
+			if(table2 != null && table2.length > 0) {
+				for(var i = 0; i< table2.length; i++) {
+					type2 += "," + table2[i].examId;
+				}
+			}
+			if(table3 != null && table3.length > 0) {
+				for(var i = 0; i< table3.length; i++) {
+					type3 += "," + table3[i].examId;
+				}
+			}
+			if(table4 != null && table4.length > 0) {
+				for(var i = 0; i< table4.length; i++) {
+					type4 += "," + table4[i].examId;
+				}
+			}
+			if(table5 != null && table5.length > 0) {
+				for(var i = 0; i< table5.length; i++) {
+					type5 += "," + table5[i].examId;
+				}
+			}
+			if(exam1 != null && exam1.length > 0) {
+				for(var i = 0; i< exam1.length; i++) {
+					examDept += "," + exam1[i].deptId;
+				}
+			}
+			if(exam2 != null && exam2.length > 0) {
+				for(var i = 0; i< exam2.length; i++) {
+					examiner += "," + exam2[i].userId;
+				}
+			}
+			if(exam3 != null && exam3.length > 0) {
+				for(var i = 0; i< exam3.length; i++) {
+					checkDept += "," + exam3[i].deptId;
+				}
+			}if(exam4 != null && exam4.length > 0) {
+				for(var i = 0; i< exam4.length; i++) {
+					checker += "," + exam4[i].userId;
+				}
+			}
+			var data = {
+					venues: myform.venues.value,
+					postId: myform.postId.value,
+					deptId:myform.deptId.value,
+					title: myform.title.value,
+					num1:myform.num1.value,
+					num2:myform.num2.value,
+					num3:myform.num3.value,
+					num4:myform.num4.value,
+					num5:myform.num5.value,
+					type1:type1,
+					type2:type2,
+					type3:type3,
+					type4:type4,
+					type5:type5,
+					checker: checker,
+					checkDept: checkDept,
+					examiner: examiner,
+					examDept: examDept
+			}
+        	$.operate.saveModal(prefix + "/checkhistory", data);
+		};
+		
+		function validateTablle(validate) {
+			var icon = "<i class='fa fa-times-circle'></i> ";
+	        $("#commentForm").validate({
+	            rules: {
+	                num1: {
+	                    required: true,
+	                    minlength: 1
+	                },
+	                num2: {
+	                    required: true,
+	                    minlength: 1
+	                },
+	                num3: {
+	                    required: true,
+	                    minlength: 1
+	                },
+	                venues: {
+	                    required: true,
+	                    minlength: 1
+	                }, 
+	                postId: {
+	                    required: true,
+	                    minlength: 1
+	                },
+	                title: {
+	                	required: true,
+	                    minlength: 1
+	                },
+	                deptId: {
+	                	required: true,
+	                    minlength: 1
+	                }
+	            },
+	            messages: {
+	            	title: icon + "请输入场次",
+	            }
+	        }); 
+			var t1 = $("#bootstrap-table-1").bootstrapTable('getSelections', function (row) {
+		        return row;
+			});
+			var t2 = $("#bootstrap-table-2").bootstrapTable('getSelections', function (row) {
+		        return row;
+			});
+			var t3 = $("#bootstrap-table-3").bootstrapTable('getSelections', function (row) {
+		        return row;
+			});
+			var t4 = $("#bootstrap-table-4").bootstrapTable('getSelections', function (row) {
+		        return row;
+			});
+			if (t1 == null || t1.length <= 0) {
+    			$.modal.msgError("题型一请至少选择一行");
+    			validate = false;
+    		} else if (t2 == null || t2.length <= 0) {
+    			$.modal.msgError("题型二请至少选择一个考员部门");
+    			validate = false;
+    		} else if (t3 == null || t3.length <= 0) {
+    			$.modal.msgError("题型三请至少选择一个考员部门");
+    			validate = false;
+    		} else if (t4 == null || t4.length <= 0) {
+    			$.modal.msgError("题型四请至少选择一个考员部门");
+    			validate = false;
+    		} 
+			
+			var e1 = $("#bootstrap-exam-1").bootstrapTable('getSelections', function (row) {
+		        return row;
+			});
+			var e2 = $("#bootstrap-exam-2").bootstrapTable('getSelections', function (row) {
+		        return row;
+			});
+			var e3 = $("#bootstrap-exam-3").bootstrapTable('getSelections', function (row) {
+		        return row;
+			});
+			var e4 = $("#bootstrap-exam-4").bootstrapTable('getSelections', function (row) {
+		        return row;
+			});
+    		if (e1 == null ||e1.length <= 0) {
+    			$.modal.msgError("请至少选择一个考员部门");
+    			validate = false;
+    		} else if (e2 == null ||e2.length <= 0) {
+    			$.modal.msgError("请至少选择一名考员");
+    			validate = false;
+    		} else if (e3 == null ||e3.length <= 0) {
+    			$.modal.msgError("请至少选择一个考官部门");
+    			validate = false;
+    		} else if (e4 == null ||e4.length <= 0) {
+    			$.modal.msgError("请至少选择一名考官");
+    			validate = false;
+    		} 
+    		
+    		if (validate) {
+   				createExamRecord();
+   			} else {
+   				$.modal.msgError("请选择必填项");
+   				return false;
+   			}
+    		
+		};
+		
+		function searchHistory(){
+			$.modal.openTab("出题历史记录", prefix + "/hischeck");
+		};
+		
+	</script>
+</body>
+</html>

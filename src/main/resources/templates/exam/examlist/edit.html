@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('修改题库')" />
+    <th:block th:include="include :: bootstrap-fileinput-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-examlist-edit" th:object="${examList}">
+            <input name="examId" th:field="*{examId}" type="hidden">
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">题目类型id：</label>
+                <div class="col-sm-8">
+                	<select name="typeId" class="form-control m-b" th:with="type=${@dict.getType('exam_type')}" required>
+                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:field="*{typeId}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">考题编码：</label>
+                <div class="col-sm-8">
+                    <input name="code" th:field="*{code}" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">考题名称：</label>
+                <div class="col-sm-8">
+                    <textarea name="title" class="form-control">[[*{title}]]</textarea>
+                </div>
+            </div>
+             <div class="form-group"> 
+                <label class="col-sm-3 control-label">技术问答：</label>
+                <div class="col-sm-8">
+                   <!--  <input name="avatar" th:field="*{avatar}" class="form-control" type="text" required> -->
+                     <p><img name="avatar" class="img-circle img-lg" th:src="(${examList.avatar} == '') ? @{/img/profile.jpg} : @{${examList.avatar}}"></p>
+                        <p><a href="javascript:avatar()">修改题目</a></p>
+                </div>
+            </div>
+             <div class="form-group">
+                <label class="col-sm-3 control-label">部门：</label>
+                <div class="col-sm-8">
+                    <select name="deptId" class="form-control m-b" th:with="type=${@dict.getType('sys_dept')}" required>
+                       <option value="" >请选择部门</option>
+                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:field="*{deptId}"></option>
+                    </select>
+                </div>
+            </div>
+             <div class="form-group">
+                <label class="col-sm-3 control-label">岗级：</label>
+                <div class="col-sm-8">
+               	 	<select name="postId" class="form-control" th:with="type=${@dict.getType('sys_postc')}" required>
+                        <option value="" >请选择岗级</option>
+                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:field="*{postId}"></option>
+					</select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">答案：</label>
+                <div class="col-sm-8">
+                    <textarea name="answer" class="form-control" style="height:120px;">[[*{answer}]]</textarea>
+                </div>
+            </div>
+             <div class="form-group">
+                <label class="col-sm-3 control-label">文件上传：</label>
+                <div class="col-sm-8">
+	                <div class="file-loading">
+		            	<input id="fileinput-answer" name="avatarfile" type="file" multiple>
+		        	</div>
+	        	</div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">分数：</label>
+                <div class="col-sm-8">
+                    <input name="npoint" th:field="*{npoint}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">题目状态：</label>
+                <div class="col-sm-8">
+                   	<label class="toggle-switch switch-solid">
+                        <input type="checkbox" id="status" th:checked="${examList.status == '0' ? true : false}">
+                        <span></span>
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">备注：</label>
+                <div class="col-sm-8">
+                    <textarea name="remark" class="form-control">[[*{remark}]]</textarea>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="row">
+        <div class="col-sm-offset-5 col-sm-10">
+            <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler()"><i class="fa fa-check"></i>保 存</button>&nbsp;
+            <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-reply-all"></i>关 闭 </button>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: bootstrap-fileinput-js" />
+    <script type="text/javascript">
+        var prefix = ctx + "exam/examlist";
+        $("#form-examlist-edit").validate({
+            focusCleanup: true
+        });
+    	var examId = [[*{examId}]];
+        var initialPreview = [];
+        var initialPreviewConfig = new Array();
+        
+        //var files = ${file};
+        /**
+         * 初始化文件预览
+         */
+       function initFile() {
+        	var url = prefix + "/queryFiles/" + examId;
+    	   	$.get(url, function(data) {
+    			    for (var i = 0; i < data.value.length; i++) {
+    	                initialPreview.push(data.value[i].filepath);
+    	                var config = {type: data.value[i].type, url:  data.value[i].filepath};
+    	                initialPreviewConfig[i] = config;
+    	            }
+    			    initFileInput();
+    		 });
+        }
+        
+        $(function () {
+            initFile(); 
+        });
+        
+        function initFileInput() {
+            $("#fileinput-answer").fileinput({
+                'theme': 'explorer-fas',
+                'uploadUrl': prefix + '/uploadFiles/' + examId,
+                showPreview : true, //是否显示预览
+                initialPreviewAsData: true,
+                initialPreview: initialPreview,
+                initialPreviewConfig: initialPreviewConfig,
+            });
+        };
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/edit", $('#form-examlist-edit').serialize());
+            }
+        };
+        function avatar() {
+        	var examId = [[*{examId}]];
+	        var url = ctx + 'exam/examlist/avatar/' + examId;
+	        $.modal.open("修改头像", url);
+	    };
+	    function submitHandler() {
+	        if ($.validate.form()) {
+	        	var data = $("#form-examlist-edit").serializeArray();
+	        	$.operate.saveTab(prefix + "/edit", data);
+	        }
+	    };
+    </script>
+</body>
+</html>

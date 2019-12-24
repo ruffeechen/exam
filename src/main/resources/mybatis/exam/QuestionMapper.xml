@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.exam.question.mapper.QuestionMapper">
+
+	<resultMap type="Question" id="QuestionResult">
+		<result property="qId" column="q_id" />
+		<result property="deptId" column="dept_id" />
+		<result property="postc" column="postc" />
+		<result property="postId" column="post_id" />
+		<result property="level" column="level" />
+		<result property="userId" column="user_id" />
+		<result property="venues" column="venues" />
+		<result property="venuesName" column="venues_name" />
+		<result property="userName" column="user_name" />
+		<result property="name" column="name" />
+		<result property="npoint" column="npoint" />
+		<result property="createBy" column="create_by" />
+		<result property="createTime" column="create_time" />
+		<result property="updateBy" column="update_by" />
+		<result property="updateTime" column="update_time" />
+	</resultMap>
+
+	<resultMap type="ExamQuestionEntity" id="ExamQuestionResult">
+		<result property="markId" column="mark_id" />
+		<result property="qId" column="q_id" />
+		<result property="examId" column="exam_id" />
+		<result property="checker" column="checker" />
+		<result property="npoint" column="npoint" />
+	</resultMap>
+
+	<resultMap type="QuestionWrapper" id="QuestionWrapResult">
+		<result property="checkId" column="check_id" />
+		<result property="deptId" column="dept_id" />
+		<result property="postId" column="post_id" />
+		<result property="venues" column="venues" />
+		<result property="title" column="title" />
+		<result property="num1" column="num1" />
+		<result property="num2" column="num2" />
+		<result property="num3" column="num3" />
+		<result property="num4" column="num4" />
+		<result property="num5" column="num5" />
+		<result property="type1" column="type1" />
+		<result property="type2" column="type2" />
+		<result property="type3" column="type3" />
+		<result property="type4" column="type4" />
+		<result property="type5" column="type5" />
+		<result property="examiner" column="examiner" />
+		<result property="examDept" column="exam_dept" />
+		<result property="checker" column="checker" />
+		<result property="checkDept" column="check_dept" />
+		<result property="createBy" column="create_by" />
+		<result property="createTime" column="create_time" />
+	</resultMap>
+
+	<sql id="selectQuestionVo">
+		select q_id, dept_id, postc, post_id, level, venues, name, npoint,user_id,
+		create_by, create_time, update_by, update_time from t_exam_question
+	</sql>
+
+	<sql id="selectMarkVo">
+		select mark_id,q_id, exam_id,checker,checker1,checker2,checker3,npoint,npoint1,npoint2,npoint3 from t_exam_mark
+	</sql>
+
+	<sql id="selectQuestionsVo">
+		select q.q_id, q.dept_id, q.postc, q.post_id, q.level,v.name as venues_name, q.venues,u.user_name, q.name, q.npoint,q.user_id,
+		q.create_by, q.create_time, q.update_by, q.update_time from t_exam_question q
+		left join sys_user u on q.user_id=u.user_id
+		left join t_exam_venues v on q.venues=v.venues_id
+		
+	</sql>
+
+	<sql id="selectCheckVo">
+		select check_id,examiner,exam_dept,checker,check_dept, 
+		type1,type2,type3,type4,type5,
+		dept_id, post_id, venues, title, num1,num2,num3,num4,num5,
+		create_by, create_time from t_exam_check
+	</sql>
+
+	<select id="selectQuestionList" parameterType="Question"
+		resultMap="QuestionResult">
+		<include refid="selectQuestionVo" />
+		<where>
+			<if test="deptId != null "> and dept_id = #{deptId}</if>
+			<if test="postc != null "> and postc = #{postc}</if>
+			<if test="postId != null "> and post_id = #{postId}</if>
+			<if test="level != null "> and level = #{level}</if>
+			<if test="venues != null  and venues != ''"> and venues = #{venues}</if>
+			<if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+			<if test="npoint != null "> and npoint = #{npoint}</if>
+		</where>
+	</select>
+	
+	<select id="selectMarkList" parameterType="Long"
+		resultMap="ExamQuestionResult">
+		<include refid="selectMarkVo" />
+		where q_id = #{qId}
+	</select>
+	
+	<select id="selectQuestionsList" parameterType="Question"
+		resultMap="QuestionResult">
+		<include refid="selectQuestionsVo" />
+		<where>
+			<if test="deptId != null "> and q.dept_id = #{deptId}</if>
+			<if test="postId != null "> and q.post_id = #{postId}</if>
+			<if test="venues != null  and venues != ''"> and q.venues = #{venues}</if>
+		</where>
+	</select>
+
+	<select id="selectQuestionById" parameterType="Long" resultMap="QuestionResult">
+		<include refid="selectQuestionVo" />
+		where q_id = #{qId}
+	</select>
+	
+	<select id="selectCheckById" parameterType="Long" resultMap="QuestionWrapResult">
+		<include refid="selectCheckVo" />
+		where check_id = #{checkId}
+	</select>
+
+	<!-- 查询出题记录 -->
+	<select id="selectCheckerList" parameterType="QuestionWrapper" resultMap="QuestionWrapResult">
+		<include refid="selectCheckVo" />
+		<where>
+			<if test="deptId != null "> and dept_id = #{deptId}</if>
+			<if test="postId != null "> and post_id = #{postId}</if>
+			<if test="venues != null  and venues != ''"> and venues = #{venues}</if>
+			<if test="title != null  and title != ''"> and title like concat('%', #{title}, '%')</if>
+		</where>
+		order  by create_time desc
+	</select>
+
+
+	<insert id="createCheck" parameterType="QuestionWrapper"
+		useGeneratedKeys="true" keyProperty="checkId">
+		insert into t_exam_check
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="deptId != null  and deptId != ''">dept_id,</if>
+			<if test="postId != null  and postId != ''">post_id,</if>
+			<if test="venues != null  and venues != ''">venues,</if>
+			<if test="title != null  and title != ''">title,</if>
+			<if test="num1 != null  and num1 != ''">num1,</if>
+			<if test="num2 != null  and num2 != ''">num2,</if>
+			<if test="num3 != null  and num3 != ''">num3,</if>
+			<if test="num4 != null  and num4 != ''">num4,</if>
+			<if test="num5 != null  and num5 != ''">num5,</if>
+			<if test="type1 != null  and type1 != ''">type1,</if>
+			<if test="type2 != null  and type2 != ''">type2,</if>
+			<if test="type3 != null  and type3 != ''">type3,</if>
+			<if test="type4 != null  and type4 != ''">type4,</if>
+			<if test="type5 != null  and type5 != ''">type5,</if>
+			<if test="examiner != null  and examiner != ''">examiner,</if>
+			<if test="examDept != null  and examDept != ''">exam_dept,</if>
+			<if test="checker != null  and checker != ''">checker,</if>
+			<if test="checkDept != null  and checkDept != ''">check_dept,</if>
+			<if test="createBy != null  and createBy != ''">create_by,</if>
+			<if test="createTime != null ">create_time,</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="deptId != null  and deptId != ''">#{deptId},</if>
+			<if test="postId != null  and postId != ''">#{postId},</if>
+			<if test="venues != null  and venues != ''">#{venues},</if>
+			<if test="title != null  and title != ''">#{title},</if>
+			<if test="num1 != null  and num1 != ''">#{num1},</if>
+			<if test="num2 != null  and num2 != ''">#{num2},</if>
+			<if test="num3 != null  and num3 != ''">#{num3},</if>
+			<if test="num4 != null  and num4 != ''">#{num4},</if>
+			<if test="num5 != null  and num5 != ''">#{num5},</if>
+			<if test="type1 != null  and type1 != ''">#{type1},</if>
+			<if test="type2 != null  and type2 != ''">#{type2},</if>
+			<if test="type3 != null  and type3 != ''">#{type3},</if>
+			<if test="type4 != null  and type4 != ''">#{type4},</if>
+			<if test="type5 != null  and type5 != ''">#{type5},</if>
+			<if test="examiner != null  and examiner != ''">#{examiner},</if>
+			<if test="examDept != null  and examDept != ''">#{examDept},</if>
+			<if test="checker != null  and checker != ''">#{checker},</if>
+			<if test="checkDept != null  and checkDept != ''">#{checkDept},</if>
+			<if test="createBy != null  and createBy != ''">#{createBy},</if>
+			<if test="createTime != null ">#{createTime},</if>
+		</trim>
+	</insert>
+	
+	<!-- 插入考卷 -->
+    <insert id="insertQuestion" parameterType="Question" useGeneratedKeys="true" keyProperty="qId">
+        insert into t_exam_question
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="deptId != null ">dept_id,</if>
+            <if test="postc != null ">postc,</if>
+            <if test="postId != null ">post_id,</if>
+            <if test="level != null ">level,</if>
+            <if test="userId != null ">user_id,</if>
+            <if test="venues != null  and venues != ''">venues,</if>
+            <if test="name != null  and name != ''">name,</if>
+            <if test="npoint != null ">npoint,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="deptId != null ">#{deptId},</if>
+            <if test="postc != null ">#{postc},</if>
+            <if test="postId != null ">#{postId},</if>
+            <if test="level != null ">#{level},</if>
+            <if test="userId != null ">#{userId},</if>
+            <if test="venues != null  and venues != ''">#{venues},</if>
+            <if test="name != null  and name != ''">#{name},</if>
+            <if test="npoint != null ">#{npoint},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+         </trim>
+    </insert>
+    
+    <!-- 插入考题与试卷关联关系 -->
+     <insert id="insertExamQuestion" parameterType="ExamQuestionEntity" useGeneratedKeys="true" keyProperty="markId">
+        insert into t_exam_mark
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="qId != null ">q_id,</if>
+            <if test="examId != null ">exam_id,</if>
+            <if test="checker != null ">checker,</if>
+            <if test="npoint != null ">npoint,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="qId != null ">#{qId},</if>
+            <if test="examId != null ">#{examId},</if>
+            <if test="checker != null ">#{checker},</if>
+            <if test="npoint != null ">#{npoint},</if>
+         </trim>
+    </insert>
+    
+    <update id="updateExamMark" parameterType="ExamQuestionEntity">
+        update t_exam_mark
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="npoint != null ">npoint = #{npoint},</if>
+            <if test="checker != null ">checker = #{checker},</if>
+             <if test="npoint1 != null ">npoint1 = #{npoint1},</if>
+            <if test="checker1 != null ">checker1 = #{checker1},</if>
+            <if test="npoint2 != null ">npoint2 = #{npoint2},</if>
+            <if test="checker2 != null ">checker2 = #{checker2},</if>
+             <if test="npoint3 != null ">npoint3 = #{npoint3},</if>
+            <if test="checker3 != null ">checker3 = #{checker3},</if>
+        </trim>
+        where mark_id = #{markId}
+    </update>
+</mapper>

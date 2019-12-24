@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('评分结果报表')" />
+    <th:block th:include="include :: jquery-steps-css" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <p>考题名称：</p>
+                                <input type="text" name="title"/>
+                            </li>
+                            <li>
+                                <p>题目状态：</p>
+                                <select name="status" th:with="type=${@dict.getType('sys_normal_disable')}">
+										<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table" data-mobile-responsive="true"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var prefix = ctx + "exam/checklist";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                importUrl: prefix + "/importData",
+                importTemplateUrl: prefix + "/importTemplate",
+                exportUrl: prefix + "/export",
+                showExport: true,
+				queryParams: queryParams,
+                modalName: "题库",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field : 'serialno', 
+                    title : '序号',
+                    visible: false
+                },{
+                    field : 'userName', 
+                    title : '姓名'
+                },{
+                    field : 'idno', 
+                    title : '身份证号'
+                },{
+                    field : 'postId', 
+                    title : '岗位序列'
+                },{
+                    field : 'title', 
+                    title : '申报专业类型'
+                },{
+                    field : 'postName', 
+                    title : '申报岗位名称'
+                },{
+                    field : 'postC', 
+                    title : '申报岗级'
+                },{
+                    field : 'applymodule', 
+                    title : '申报模块'
+                },{
+                    field : 'npoint', 
+                    title : '评分'
+                }
+                ]
+            };
+            $.table.init(options);
+        });
+        
+        function queryParams(params) {
+			var search = $.table.queryParams(params);
+			search.typeId = $("#typeId").val();
+			return search;
+		}
+		
+    </script>
+</body>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.exam.venues.mapper.ExamVenuesMapper">
+    
+    <resultMap type="ExamVenues" id="ExamVenuesResult">
+        <result property="venuesId"    column="venues_id"    />
+        <result property="nyear"    column="nyear"    />
+        <result property="nmonth"    column="nmonth"    />
+        <result property="code"    column="code"    />
+        <result property="name"    column="name"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectExamVenuesVo">
+        select venues_id, nyear, nmonth, code, name, create_by, create_time, update_by, update_time from t_exam_venues
+    </sql>
+
+    <select id="selectExamVenuesList" parameterType="ExamVenues" resultMap="ExamVenuesResult">
+        <include refid="selectExamVenuesVo"/>
+        <where>  
+            <if test="nyear != null  and nyear != ''"> and nyear = #{nyear}</if>
+            <if test="nmonth != null  and nmonth != ''"> and nmonth = #{nmonth}</if>
+            <if test="code != null  and code != ''"> and code = #{code}</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectExamVenuesById" parameterType="Long" resultMap="ExamVenuesResult">
+        <include refid="selectExamVenuesVo"/>
+        where venues_id = #{venuesId}
+    </select>
+    <select id="selectExamVenues" resultMap="ExamVenuesResult">
+     	<include refid="selectExamVenuesVo"/>
+    </select>
+    <select id="selectExamByName" parameterType="ExamVenues" resultMap="ExamVenuesResult">
+    	<include refid="selectExamVenuesVo"></include>
+    	where code = #{code} and name = #{name}
+    </select>
+    <insert id="insertExamVenues" parameterType="ExamVenues" useGeneratedKeys="true" keyProperty="venuesId">
+        insert into t_exam_venues
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="nyear != null  and nyear != ''">nyear,</if>
+            <if test="nmonth != null  and nmonth != ''">nmonth,</if>
+            <if test="code != null  and code != ''">code,</if>
+            <if test="name != null  and name != ''">name,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="nyear != null  and nyear != ''">#{nyear},</if>
+            <if test="nmonth != null  and nmonth != ''">#{nmonth},</if>
+            <if test="code != null  and code != ''">#{code},</if>
+            <if test="name != null  and name != ''">#{name},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateExamVenues" parameterType="ExamVenues">
+        update t_exam_venues
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="nyear != null  and nyear != ''">nyear = #{nyear},</if>
+            <if test="nmonth != null  and nmonth != ''">nmonth = #{nmonth},</if>
+            <if test="code != null  and code != ''">code = #{code},</if>
+            <if test="name != null  and name != ''">name = #{name},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+        </trim>
+        where venues_id = #{venuesId}
+    </update>
+
+    <delete id="deleteExamVenuesById" parameterType="Long">
+        delete from t_exam_venues where venues_id = #{venuesId}
+    </delete>
+
+    <delete id="deleteExamVenuesByIds" parameterType="String">
+        delete from t_exam_venues where venues_id in 
+        <foreach item="venuesId" collection="array" open="(" separator="," close=")">
+            #{venuesId}
+        </foreach>
+    </delete>
+    
+</mapper>
